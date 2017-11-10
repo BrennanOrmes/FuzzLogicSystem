@@ -1,9 +1,6 @@
 import re
 import math
 
-# txtLines = []
-
-
 def main():
     print("Please input a file name ( for example data.txt)")
     txt = input(">: ")

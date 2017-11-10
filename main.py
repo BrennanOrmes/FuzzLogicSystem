@@ -11,8 +11,22 @@ def main():
     rWorldValues = data["crisp"]
     mCurves = data["curves"]
 
+    print("Here is our rules:")
+    for x in rList:
+        print(x)
+    print("Here is our crisp values:")
+    for x in rWorldValues:
+        print(x)
+
     fuzzyWorldValues = fuzzifyValues(rWorldValues, mCurves)
-    processedRules = ruleProcess(rList, fuzzyWorldValues, mCurves)
+
+    print("Here is our curves:")
+    for k, v in mCurves.items():
+        print(k)
+
+    answer = ruleProcess(rList, fuzzyWorldValues, mCurves)
+    
+    print("\nAnd the answer is " + str(answer))
 
 
 def dictionaryInit(txt):
@@ -118,10 +132,13 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
     curvesToCheck = []
 
     #print(fuzzyWorldValues)
+    print("Parsed Rules: ")
     for y in rList:
         #print(y)
         splitRule = y.split(" ")
         ruleConditions = {splitRule[2]: splitRule[4], "conjunctive": splitRule[5], splitRule[7]: splitRule[9], splitRule[12]: splitRule[15]}
+        
+        print(ruleConditions)
 
         
         if splitRule[5] == "and":
@@ -134,6 +151,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
                             if float(value) > 0:
                                 #print(value)
                                 andValueList.append(value)
+                                curvesToCheck.append(splitRule[15])
                             else:
                                 #print("I have passed")
                                 pass
@@ -157,6 +175,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
                             if float(value) > 0:
                                 #print(value)
                                 orValueList.append(value)
+                                curvesToCheck.append(splitRule[15])
                             else:
                                 #print("I have passed")
                                 pass
@@ -192,9 +211,9 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
     dValues = {}
     centres = {}
     for x in range(len(mCurves[outputK])):
-        print(mCurves[outputK][x].name)
+        #print(mCurves[outputK][x].name)
         if (mCurves[outputK][x].name in curvesToCheck):
-            #COA
+            #COA, need to make it work with 4 tuple
             curve = mCurves[outputK][x]
             base = abs((curve.b + curve.beta) - (curve.a - curve.alpha))
             total = 0.5 * base * float(potentialValueList[x-1])
@@ -207,7 +226,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
             centres[curve.name] = centre
 
     answer = sum(top) / sum(bottom)
-    print("The answer is " + answer)
+    return answer
 
 class membershipCurves:
 

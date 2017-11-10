@@ -112,7 +112,7 @@ def fuzzifyValues(rWorldValues, mCurves):
     return allMemberGroups
 
 def ruleProcess(rList, fuzzyWorldValues, mCurves):  
-    potentialValueList = []
+    potentialValueList = {}
     andValueList = []
     orValueList = []
     curvesToCheck = []
@@ -133,7 +133,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
                         if key == splitRule[4]:
                             if float(value) > 0:
                                 #print(value)
-                                andValueList.append(value)
+                                andValueList.append(dict({key : value}))
                             else:
                                 #print("I have passed")
                                 pass
@@ -142,7 +142,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
                         if key == splitRule[9]:
                             if float(value) > 0:
                                 #print(value)
-                                andValueList.append(value)
+                                andValueList.append(dict({key : value}))
                                 curvesToCheck.append(splitRule[15])
                             else: 
                                 #print("I have passed")
@@ -156,7 +156,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
                         if key == splitRule[4]:
                             if float(value) > 0:
                                 #print(value)
-                                orValueList.append(value)
+                                orValueList.append(dict({key : value}))
                             else:
                                 #print("I have passed")
                                 pass
@@ -165,7 +165,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
                         if key == splitRule[9]:
                             if float(value) > 0:
                                 #print(value)
-                                orValueList.append(value)
+                                orValueList.append(dict({key : value}))
                                 curvesToCheck.append(splitRule[15])
                             else:
                                 #print("I have passed")
@@ -178,6 +178,8 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
     potentialValueList.append(orValue)
     andValue = min(andValueList)
     potentialValueList.append(andValue)
+    # print(potentialValueList)
+    # print(curvesToCheck)
 
     offset = 0
     for x in range(len(mCurves[outputK])):
@@ -191,12 +193,13 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
 
     dValues = {}
     centres = {}
-    for x in range(len(mCurves[outputK])):
-        print(mCurves[outputK][x].name)
+    #print(potentialValueList)
+    print(curvesToCheck)
+    for x in range(len(mCurves[outputK])-1):
         if (mCurves[outputK][x].name in curvesToCheck):
             curve = mCurves[outputK][x]
             base = abs((curve.b + curve.beta) - (curve.a - curve.alpha))
-            total = 0.5 * base * float(potentialValueList[x-1])
+            total = 0.5 * base * float(potentialValueList[x])
 
             centre = (curve.a - curve.alpha) + base / 2 + offset
             top.append(centre * total)
@@ -204,9 +207,13 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
 
             dValues[curve.name] = total
             centres[curve.name] = centre
+            # print(total)
+            # print(centre)
 
+    print((top))
+    print((bottom))
     answer = sum(top) / sum(bottom)
-    print("The answer is " + answer)
+    print(answer)
 
 class membershipCurves:
 

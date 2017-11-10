@@ -194,6 +194,7 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
     for x in range(len(mCurves[outputK])):
         print(mCurves[outputK][x].name)
         if (mCurves[outputK][x].name in curvesToCheck):
+            #COA
             curve = mCurves[outputK][x]
             base = abs((curve.b + curve.beta) - (curve.a - curve.alpha))
             total = 0.5 * base * float(potentialValueList[x-1])

@@ -10,10 +10,11 @@ def main():
     beta = input("beta = ")
 
     x = membershipCurves(name, a, b, alpha, beta)
+    print(x[Name])
 
 class membershipCurves:
 
-    name = "";
+    name = ""
 
     def __init__(self, name, a, b, alpha, beta):
         self.a = int(a)

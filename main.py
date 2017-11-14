@@ -125,6 +125,7 @@ def fuzzifyValues(rWorldValues, mCurves):
 
     return allMemberGroups
 
+#Defuzzifcation
 def ruleProcess(rList, fuzzyWorldValues, mCurves):  
     potentialValueList = []
     andValueList = []

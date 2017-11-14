@@ -11,9 +11,22 @@ def main():
     rWorldValues = data["crisp"]
     mCurves = data["curves"]
 
+    print("Here is our rules:")
+    for x in rList:
+        print(x)
+    print("Here is our crisp values:")
+    for x in rWorldValues:
+        print(x)
+
     fuzzyWorldValues = fuzzifyValues(rWorldValues, mCurves)
-    answer = ruleProcess(rList, fuzzyWorldValues, mCurves)
-    print("And the answer is " + str(answer))
+
+    print("Here is our curves:")
+    for k, v in mCurves.items():
+        print(k)
+
+    potentionalValueList = ruleProcess(rList, fuzzyWorldValues, mCurves)
+    
+    print(potentionalValueList)
 
 
 def dictionaryInit(txt):
@@ -52,17 +65,17 @@ def dictionaryInit(txt):
 
         memberShips = []
         groups = read_in[i+1].split("\n")
-        
+        #print(groups)
         for z in range(0,len(groups)):
             x = groups[z].split(" ")
-            
+            #print(groups)
             #0 = Name, 1 = a, 2 = b, 3 = alpha, 4 = beta
             #Enter in tuple
             y = membershipCurves(x[0],x[1],x[2],x[3],x[4])
             memberShips.append(y)
 
         memberClasses[read_in[i].strip()] = memberShips
-       
+        #print(memberClasses)
         
    
     crispValues = crispValues.split("\n")
@@ -77,6 +90,21 @@ def dictionaryInit(txt):
     data['crisp'] = crisp  
     data['rules'] = ruleBaseList
 
+    ### DEBUG ###
+    # print(data['ruleBaseName'])
+    # print("Curves")
+    # for x in data['curves']:
+    #     print(x)
+
+    # print("RealWorld values")
+    # for x in data['crisp']:
+    #     print(x)
+    # print("Rules:")
+    
+    # for x in data['rules']:
+    #     print(x)
+    ### DEBUG END ###
+
     return data
 
 def fuzzifyValues(rWorldValues, mCurves):
@@ -90,106 +118,118 @@ def fuzzifyValues(rWorldValues, mCurves):
         memberGroup = {}
 
         for x in range(0, len(mCurves.get(rName))):
-           
+            #print(rName)
             memberGroup[mCurves.get(rName)[x].name] = str(mCurves.get(rName)[x].fuzz(rValue))
 
         allMemberGroups[rName] = memberGroup
 
     return allMemberGroups
 
+#Defuzzifcation
 def ruleProcess(rList, fuzzyWorldValues, mCurves):  
     potentialValueList = []
     andValueList = []
     orValueList = []
     curvesToCheck = []
 
-    
+    #print(fuzzyWorldValues)
+    print("Parsed Rules: ")
     for y in rList:
-        
+        #print(y)
         splitRule = y.split(" ")
         ruleConditions = {splitRule[2]: splitRule[4], "conjunctive": splitRule[5], splitRule[7]: splitRule[9], splitRule[12]: splitRule[15]}
+        
+        print(ruleConditions)
 
         
         if splitRule[5] == "and":
-            for k, v in fuzzyWorldValues.items():)
+            #print("and")
+            for k, v in fuzzyWorldValues.items():
+                #print(k)
                 if k == splitRule[2]:
                     for key, value in v.items():
                         if key == splitRule[4]:
                             if float(value) > 0:
+                                #print(value)
                                 andValueList.append(value)
                                 curvesToCheck.append(splitRule[15])
                             else:
+                                #print("I have passed")
                                 pass
                 elif k == splitRule[7]:
                     for key, value in v.items():
                         if key == splitRule[9]:
                             if float(value) > 0:
+                                #print(value)
                                 andValueList.append(value)
                                 curvesToCheck.append(splitRule[15])
-                            else:
+                            else: 
+                                #print("I have passed")
                                 pass
                 
         elif splitRule[5] == "or":
-       
+            #print("or")
             for k, v in fuzzyWorldValues.items():
                 if k == splitRule[2]:
                     for key, value in v.items():
                         if key == splitRule[4]:
                             if float(value) > 0:
-                           
+                                #print(value)
                                 orValueList.append(value)
                                 curvesToCheck.append(splitRule[15])
                             else:
-                             
+                                #print("I have passed")
                                 pass
                 elif k == splitRule[7]:
                     for key, value in v.items():
                         if key == splitRule[9]:
                             if float(value) > 0:
-                           
+                                #print(value)
                                 orValueList.append(value)
                                 curvesToCheck.append(splitRule[15])
                             else:
-                          
+                                #print("I have passed")
                                 pass
 
         
-        outputK = splitRule[12]
+    #     outputK = splitRule[12]
 
     orValue = max(orValueList)
     potentialValueList.append(orValue)
     andValue = min(andValueList)
     potentialValueList.append(andValue)
 
-    offset = 0
-    for x in range(len(mCurves[outputK])):
-        c = mCurves[outputK][x]
-        newOffset = (c.a - c.alpha)
-        if (offset > newOffset):
-            offset = newOffset
+    return potentialValueList
 
-    top = []
-    bottom = []
+    # offset = 0
+    # for x in range(len(mCurves[outputK])):
+    #     c = mCurves[outputK][x]
+    #     newOffset = (c.a - c.alpha)
+    #     if (offset > newOffset):
+    #         offset = newOffset
 
-    dValues = {}
-    centres = {}
-    for x in range(len(mCurves[outputK])):
-      
-        if (mCurves[outputK][x].name in curvesToCheck):
-            #COA, need to make it work with 4 tuple
-            curve = mCurves[outputK][x]
-            base = abs((curve.b + curve.beta) - (curve.a - curve.alpha))
-            total = 0.5 * base * float(potentialValueList[x-1])
+    # top = []
+    # bottom = []
 
-            centre = (curve.a - curve.alpha) + base / 2 + offset
-            top.append(centre * total)
-            bottom.append(total)
+    # dValues = {}
+    # centres = {}
+    # for x in range(len(mCurves[outputK])):
+    #     #print(mCurves[outputK][x].name)
+    #     if (mCurves[outputK][x].name in curvesToCheck):
+    #         #COA, need to make it work with 4 tuple
+    #         curve = mCurves[outputK][x]
+    #         base = abs((curve.b + curve.beta) - (curve.a - curve.alpha))
+    #         total = 0.5 * base * float(potentialValueList[x-1])
 
-            dValues[curve.name] = total
-            centres[curve.name] = centre
+    #         centre = (curve.a - curve.alpha) + base / 2 + offset
+    #         top.append(centre * total)
+    #         bottom.append(total)
 
-    answer = sum(top) / sum(bottom)
-    return answer
+    #         dValues[curve.name] = total
+    #         centres[curve.name] = centre
+
+    # answer = sum(top) / sum(bottom)
+    # return answer
 
 class membershipCurves:
 

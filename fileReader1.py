@@ -5,14 +5,14 @@ def main():
 
     txt = input("Please input a file name (include extensions): ")
 
-    data = initDic(txt)
+    data = dictionaryInit(txt)
 
     print(data['ruleBaseName']) 
     print(data['curves'])
     print(data['crisp'])
     print(data['rules']) 
 
-def initDic(txt):
+def dictionaryInit(txt):
     data = (txt.replace("\n",""))
     ruleBaseList = []
 
@@ -73,7 +73,7 @@ def initDic(txt):
 
     data['ruleBaseName'] = ruleBaseName
     data['curves'] = memberClasses
-    data['crisp'] = crisp #Juicy crisp values 
+    data['crisp'] = crisp
     data['rules'] = ruleBaseList
     
     return data

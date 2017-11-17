@@ -19,6 +19,7 @@ def main():
         print(x)
 
     fuzzyWorldValues = fuzzifyValues(rWorldValues, mCurves)
+    print(fuzzyWorldValues)
 
     print("Here is our curves:")
     for k, v in mCurves.items():
@@ -122,7 +123,6 @@ def fuzzifyValues(rWorldValues, mCurves):
             memberGroup[mCurves.get(rName)[x].name] = str(mCurves.get(rName)[x].fuzz(rValue))
 
         allMemberGroups[rName] = memberGroup
-
     return allMemberGroups
 
 #Defuzzifcation
@@ -209,12 +209,10 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
     top = []
     bottom = []
 
-    dValues = {}
-    centres = {}
     for x in range(len(mCurves[outputK])):
         #print(mCurves[outputK][x].name)
         if (mCurves[outputK][x].name in curvesToCheck):
-            #COA, need to make it work with 4 tuple
+            #COA
             curve = mCurves[outputK][x]
             base = abs((curve.b + curve.beta) - (curve.a - curve.alpha))
             total = 0.5 * base * float(potentialValueList[x-1])
@@ -222,9 +220,6 @@ def ruleProcess(rList, fuzzyWorldValues, mCurves):
             centre = (curve.a - curve.alpha) + base / 2 + offset
             top.append(centre * total)
             bottom.append(total)
-
-            dValues[curve.name] = total
-            centres[curve.name] = centre
 
     answer = sum(top) / sum(bottom)
     return answer
@@ -247,7 +242,7 @@ class membershipCurves:
 
         value = int(value)
 
-        if (value < (self.a - self.alpha)):
+        if (value <= (self.a - self.alpha)):
             return 0
         elif (value in range (self.a - self.alpha, self.a)):
             return (value - self.a + self.alpha) / self.alpha
@@ -255,7 +250,7 @@ class membershipCurves:
             return 1
         elif (value in range(self.b, self.b + self.beta)):
             return (self.b + self.beta - value) / self.beta
-        elif (value > (self.b + self.beta)):
+        elif (value >= (self.b + self.beta)):
             return 0
 
         return

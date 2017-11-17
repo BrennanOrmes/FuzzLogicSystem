@@ -10,7 +10,9 @@ def main():
     beta = input("beta = ")
 
     x = membershipCurves(name, a, b, alpha, beta)
-    print(x[Name])
+
+    realWorldValue = input("Input = ")
+    print(x.fuzz(realWorldValue))
 
 class membershipCurves:
 
@@ -29,11 +31,11 @@ class membershipCurves:
     def name(self):
         return self.name
 
-    def membership(self, value):
+    def fuzz(self, value):
 
         value = int(value)
 
-        if (value < (self.a - self.alpha)):
+        if (value <= (self.a - self.alpha)):
             return 0
         elif (value in range (self.a - self.alpha, self.a)):
             return (value - self.a + self.alpha) / self.alpha
@@ -41,7 +43,7 @@ class membershipCurves:
             return 1
         elif (value in range(self.b, self.b + self.beta)):
             return (self.b + self.beta - value) / self.beta
-        elif (value > (self.b + self.beta)):
+        elif (value >= (self.b + self.beta)):
             return 0
 
         return

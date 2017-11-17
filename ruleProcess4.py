@@ -249,7 +249,7 @@ class membershipCurves:
 
         value = int(value)
 
-        if (value < (self.a - self.alpha)):
+        if (value <= (self.a - self.alpha)):
             return 0
         elif (value in range (self.a - self.alpha, self.a)):
             return (value - self.a + self.alpha) / self.alpha
@@ -257,7 +257,7 @@ class membershipCurves:
             return 1
         elif (value in range(self.b, self.b + self.beta)):
             return (self.b + self.beta - value) / self.beta
-        elif (value > (self.b + self.beta)):
+        elif (value >= (self.b + self.beta)):
             return 0
 
         return
